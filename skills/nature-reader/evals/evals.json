@@ -18,6 +18,12 @@
       "prompt": "这是一篇扫描版论文。请先做 OCR，再生成全文中英文对照 Markdown，保留图注和正文的对应关系；凡是识别不稳的地方都要标低置信度。图表需要裁剪到 assets 并放在对应正文位置。",
       "expected_output": "An OCR-aware full-document Markdown reader with Original/中文 pairs, uncertainty labels, cropped figure/table assets, nearby bilingual captions, page navigation, and source-linked follow-up support.",
       "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "把这篇包含大量公式的机器学习论文做成全文中英文对照 Markdown reader。公式必须像正常 Markdown 一样渲染：行内公式用 $...$，独立公式用 $$...$$，不要把求和、分式、上下标拆成普通文本碎片。每个独立公式要有稳定来源 ID，能追溯到 PDF 页码和源文本块；如果公式识别不准，要标低置信度并保留公式截图。",
+      "expected_output": "A full-paper Markdown reader that preserves Original/中文 alignment and renders equations as Markdown math with stable E### anchors, equation numbers, source block provenance, confidence labels for uncertain formulas, and optional equation crops for low-confidence extraction.",
+      "files": []
     }
   ]
 }

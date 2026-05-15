@@ -11,6 +11,7 @@ The default output should read like a bilingual paper companion, not a summary d
 
 - keep the extractable prose, paragraph structure, and section flow
 - show original text and Chinese translation together at block level
+- render equations as readable Markdown math, using inline `$...$` and display `$$...$$` blocks instead of flattening formulas into prose
 - extract figures and tables as assets and place them at the first substantive mention or interpretation point
 - keep captions attached to figures/tables with English caption text and Chinese caption translation
 - preserve stable page and block anchors for traceability
@@ -101,6 +102,7 @@ Create stable IDs for source blocks:
 - `C001`, `C002`, ... for captions
 - `F001`, `F002`, ... for figures
 - `T001`, `T002`, ... for tables
+- `E001`, `E002`, ... for display equations or equation groups
 
 For each block, capture:
 
@@ -108,6 +110,7 @@ For each block, capture:
 - block type
 - original text
 - translation
+- equation text in Markdown/LaTeX form when the block is an equation or contains equations
 - reading-order index
 - nearby figure or table references
 - first substantive figure/table mention when applicable
@@ -122,6 +125,7 @@ Translate every extractable substantive block with these rules:
 
 - preserve technical terms unless a standard Chinese equivalent is clearly better
 - keep gene names, protein names, formulas, model names, and symbols intact
+- preserve formula meaning and structure; do not paraphrase equations into prose or flatten them into broken text
 - keep citations, superscripts, subscripts, and numeric values unchanged
 - do not collapse methods details into vague prose
 - keep paragraph order and section order unless the user asks for restructuring
@@ -132,7 +136,45 @@ Translate every extractable substantive block with these rules:
 
 If a sentence contains multiple claims, keep the translation readable but do not split away the original evidence chain.
 
-### 4. Extract and place figures and tables near the relevant discussion
+### 4. Normalize equations as Markdown math
+
+Equations are first-class reader content. A normal Markdown reader should show formulas as formulas, not as scattered PDF text fragments.
+
+Default rendering rules:
+
+- inline equations and variables should use `$...$`, for example `$x_t = a + b$`
+- standalone equations should use display math:
+
+```markdown
+<a id="E001"></a>
+**Source:** p.4 E001
+
+**Original equation:**
+$$
+x_t = a + b
+$$
+
+**中文说明:** 该式表示 ...
+```
+
+- preserve equation numbers such as `(1)` either inside the display block or immediately after it
+- keep LaTeX-style subscripts, superscripts, sums, fractions, hats, bars, Greek letters, matrices, and probabilities whenever they can be recovered
+- if PDF extraction splits one equation across several blocks, merge them into one `E###` equation group and record the contributing source block IDs in `source_map.json`
+- if exact LaTeX cannot be recovered, write the best readable Markdown math and mark confidence as `medium` or `low`
+- if a formula crop is needed to avoid guessing, save it under `assets/` and include both the crop and the approximate Markdown math
+- translate prose around equations, but keep the mathematical expression itself unchanged
+
+Prefer semantic math reconstruction over raw PDF text order. For example, extracted fragments like `L`, `X`, `i=1 log P(...)` should be normalized into `$\sum_{i=1}^{L} \log P(...)$` when the layout clearly supports it.
+
+Inline formula example inside bilingual prose:
+
+```markdown
+**Original:** Given a sequence $X=(x_1,\ldots,x_N)$, the model minimizes $L_{\mathrm{MLM}}$.
+
+**中文:** 给定序列 $X=(x_1,\ldots,x_N)$，模型最小化 $L_{\mathrm{MLM}}$。
+```
+
+### 5. Extract and place figures and tables near the relevant discussion
 
 Do not try to recreate the PDF pixel-for-pixel. Preserve semantic proximity instead.
 
@@ -148,7 +190,7 @@ Default placement rule:
 
 If the paper has a complex multi-column layout, prefer a clean reading layout over exact visual mimicry.
 
-### 4b. Crop figures and tables tightly
+### 5b. Crop figures and tables tightly
 
 When extracting a figure or table image:
 
@@ -178,7 +220,7 @@ Figure/table blocks in `paper.md` should use this shape:
 **Reading note:** [brief explanation of what to inspect in the figure]
 ```
 
-### 5. Generate the Markdown file
+### 6. Generate the Markdown file
 
 Default output is a single full-paper `paper.md` file.
 
@@ -188,6 +230,7 @@ The Markdown must include:
 - a short page/section index
 - page-level or section-level divisions for long papers
 - paragraph-level original/Chinese pairs for all extractable substantive text
+- inline and display equations rendered as Markdown math with source anchors
 - figure and table blocks placed near the relevant discussion
 - source anchors on every substantive text, figure, caption, and table block
 - a terminology table for recurring technical terms
@@ -198,7 +241,7 @@ Do not add an interactive Q&A panel or follow-up widget in the Markdown delivera
 
 If a browser preview is explicitly requested, a companion `reader.html` can be generated as a secondary artifact, but the Markdown file remains the primary output.
 
-### 6. Answer follow-up questions with source grounding
+### 7. Answer follow-up questions with source grounding
 
 When the user asks a question after the file is created:
 
@@ -206,6 +249,7 @@ When the user asks a question after the file is created:
 - answer from the paper, not from memory
 - cite the exact block IDs and page numbers
 - if the answer depends on a figure or table, cite that too
+- if the answer depends on an equation, cite the equation ID and page, and explain the symbols from nearby source blocks
 - if the paper does not support the claim, say so plainly
 
 Every substantive answer should include a source pointer such as:

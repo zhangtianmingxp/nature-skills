@@ -7,9 +7,11 @@ Markdown-first reading workflow for full papers.
 `nature-reader` turns a PDF, DOI, arXiv link, publisher HTML page, or pasted manuscript into a complete Markdown reading artifact with:
 
 - paragraph-level original text and Chinese translation in prose form
+- readable Markdown math for inline and standalone equations
 - extracted figures and tables placed near the discussion that first substantively references them
 - original captions plus Chinese caption translations
 - stable page and block anchors for traceability
+- stable equation anchors for display formulas
 - tight figure crops and a full-document source map
 
 ## Primary outputs
@@ -39,3 +41,5 @@ Use this skill when the user asks for:
 
 Do not use this skill for summaries, keyword bullets, or citation-only search tasks.
 When triggered, do not output only a Chinese summary. The default artifact is `paper.md` with visible `Original` / `中文` pairs and figure/table cards inserted at the relevant source locations.
+
+Equations should render as equations in Markdown. Inline formulas use `$...$`; standalone equations use `$$...$$` and receive stable `E###` anchors. If PDF extraction splits a formula into fragments, reconstruct the readable equation when possible and record the contributing source blocks in `source_map.json`.

@@ -8,12 +8,13 @@ When the user asks a follow-up question about the paper:
 2. Answer from those blocks first.
 3. Cite the exact page and block IDs.
 4. Include the figure or table if it is part of the evidence.
-5. Say `原文未明确说明` if the paper does not support the claim.
+5. Include the equation ID if the answer depends on a formula, and explain symbols from nearby source blocks.
+6. Say `原文未明确说明` if the paper does not support the claim.
 
 ## Good answer pattern
 
 - `结论`
-- `原文依据: p.5 S014-S016, Fig. 3 caption`
+- `原文依据: p.5 S014-S016, p.6 E002, Fig. 3 caption`
 - `补充说明: 这是译文中的概括，不是原文逐字表述`
 
 ## Bad answer pattern
@@ -27,6 +28,10 @@ When the user asks a follow-up question about the paper:
 
 - Keep specialized terms stable.
 - Keep equations, units, symbols, and citations unchanged.
+- Render equations as Markdown math: inline expressions in `$...$`, standalone equations in `$$...$$`.
+- Reconstruct split PDF equation fragments into one readable equation when layout evidence is clear.
+- Preserve equation numbers and connect display equations to stable `E###` anchors.
+- If equation reconstruction is uncertain, mark confidence and include an equation crop when possible.
 - Do not over-simplify method steps.
 - If a term has no clear Chinese equivalent, keep the original term and add a short note.
 - Preserve paragraph-level original/Chinese alignment in `paper.md`.
